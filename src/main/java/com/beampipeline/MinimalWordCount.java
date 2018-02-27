@@ -29,7 +29,7 @@ import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.values.KV;
 import org.apache.beam.sdk.values.TypeDescriptors;
 
-import org.apache.beam.runners.flink.*;
+import org.apache.beam.runners.spark.*;
 
 /**
  * An example that counts words in Shakespeare.
@@ -67,8 +67,8 @@ public class MinimalWordCount {
     // in its dependencies.
     PipelineOptions options = PipelineOptionsFactory.create();
 
-    options.as(FlinkPipelineOptions.class)
-       .setRunner(FlinkRunner.class);
+    options.as(SparkPipelineOptions.class)
+       .setRunner(SparkRunner.class);
 
     // In order to run your pipeline, you need to make following runner specific changes:
     //
