@@ -9,6 +9,9 @@ mvn -B archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -Dgroup
 
 had to manage pom.xml manually - added java v1.8 plugin and apache beam dependencies
 
-### packaging up for Spark
+### Package and submit to spark
 
+```
 mvn package
+restart
+```

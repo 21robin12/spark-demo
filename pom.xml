@@ -18,19 +18,18 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
+    <!-- <dependency>
         <groupId>org.apache.spark</groupId>
         <artifactId>spark-core_2.11</artifactId>
         <version>2.2.1</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-sql -->
     <dependency>
         <groupId>org.apache.spark</groupId>
         <artifactId>spark-sql_2.11</artifactId>
         <version>2.2.1</version>
-    </dependency>
+    </dependency> -->
 
-    <!-- <dependency>
+    <dependency>
       <groupId>org.apache.beam</groupId>
       <artifactId>beam-sdks-java-core</artifactId>
       <version>2.3.0</version>
@@ -39,7 +38,7 @@
         <groupId>org.apache.beam</groupId>
         <artifactId>beam-runners-spark</artifactId>
         <version>2.3.0</version>
-    </dependency> -->
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -50,17 +49,31 @@
       </plugin> -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.0.2</version>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.4.1</version>
         <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <mainClass>com.beampipeline.MinimalWordCount</mainClass>
-            </manifest>
-          </archive>
+            <!-- get all project dependencies -->
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            <!-- MainClass in mainfest make a executable jar -->
+            <archive>
+                <manifest>
+                <mainClass>com.beampipeline.MinimalWordCount</mainClass>
+                </manifest>
+            </archive>
+
         </configuration>
-      </plugin>
+        <executions>
+            <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+                <goal>single</goal>
+            </goals>
+            </execution>
+        </executions>
+    </plugin>
     </plugins>
   </build>
 </project>
