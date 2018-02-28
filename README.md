@@ -9,5 +9,6 @@ mvn -B archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -Dgroup
 
 had to manage pom.xml manually - added java v1.8 plugin and apache beam dependencies
 
-package for Flink:
+### packaging up for Spark
+
 mvn package

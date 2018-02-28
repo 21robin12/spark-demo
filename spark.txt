@@ -1,0 +1,64 @@
+# RUNNING IN HELM
+
+helm install --name spark stable/spark --namespace spark
+
+pip install pyspark (installs locally)
+adds `pyspark` and `spark-submit` to command line
+
+# ATTEMPTING TO RUN BEAM
+
+mvn package
+kubectl expose pod spark-master-8c7d856fd-rt5t5 --port=7077 --target-port=7077 --namespace=spark
+spark-submit --class com.beampipeline.MinimalWordCount --master spark://spark-master:6066 --deploy-mode cluster beampipeline-0.1.jar
+
+spark-submit --class com.beampipeline.MinimalWordCount --master spark://spark-master:6066 beampipeline-0.1.jar
+
+# RUNNING IN DOCKER
+
+https://hub.docker.com/r/p7hb/docker-spark/
+https://hub.docker.com/r/p7hb/docker-spark/~/dockerfile/
+https://github.com/P7h/docker-spark
+
+```
+// start container - needs interactive mode else container stops immediately
+docker run -it -p 4040:4040 -p 4041:4041 -p 8080:8080 -p 8081:8081 -p 7077:7077 -h spark --name=spark p7hb/docker-spark
+
+// start master (.sh scripts already added to $PATH)
+start-master.sh
+
+// start slave
+start-slave.sh spark://spark:7077  
+```
+
+ - Now visit the master at http://localhost:8080/ and the slave at http://localhost:8081/
+ - To get a full web UI we need a running SparkContext. One SparkContext is started for each running application
+
+```
+// run the pi example application - it runs and stops immediately, so the web UI isn't available for very long
+spark-submit --class org.apache.spark.examples.SparkPi --master spark://spark:7077 $SPARK_HOME/examples/jars/spark-examples*.jar 100
+
+// the spark-shell is run as an application, and it doesn't exit immediately
+// the web UI is then available at http://localhost:4040
+spark-shell --master spark://spark:7077
+
+// if we then run the pi example again, it's status is WAITING since we only have one worker which is running the spark-shell
+// we can then view the web UI for this application at http://localhost:4041 (Spark increments the port number until it finds one free)
+// after running this, also view the master ui at http://localhost:8080/ to see both applications - one RUNNING and one WAITING
+spark-submit --class org.apache.spark.examples.SparkPi --master spark://spark:7077 $SPARK_HOME/examples/jars/spark-examples*.jar 100
+```
+                    
+Submitting job from local machine - CURRENTLY ERRORS
+
+```
+docker cp spark:/usr/local/spark/examples/jars/spark-examples_2.11-2.2.0.jar .
+spark-submit --class org.apache.spark.examples.SparkPi --master spark://localhost:7077 spark-examples_2.11-2.2.0.jar
+```
+
+### Running detatched in Docker 
+
+AS A STARTING POINT FOR RUNNING IN K8S
+AIM: RUN IT IN K8S WITH BASIC SETUP SO I CAN START USING IT PROPERLY
+
+Can run in detached AND foreground mode: https://stackoverflow.com/questions/30209776/docker-container-will-automatically-stop-after-docker-run-d
+docker build -t spark-kubernetes .
+docker run -d -it -p 4040:4040 -p 4041:4041 -p 8080:8080 -p 8081:8081 -p 7077:7077 -h spark --name=spark spark-kubernetes
